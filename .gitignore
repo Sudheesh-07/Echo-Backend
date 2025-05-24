@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+*.env
+
+# VSCode settings
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs and temp files
+*.log
+*.sqlite3
+*.db
+*.pid
+*.swp
+
+# Python test cache
+.pytest_cache/
+coverage/
+
+# Redis dump files (if local)
+dump.rdb
+
+# Systemd service override (if custom & local)
+*.service
+
+# Gunicorn socket files
+*.sock
+
+# Migrations (if you use Alembic in future)
+migrations/
+
+# Nginx config backup files
+*.bak
+
+# Node dependencies (if you add frontend later)
+node_modules/
+
+# __pypackages__ (PEP 582 support)
+__pypackages__/
+
+# mypy / coverage / test artifacts
+.mypy_cache/
+.coverage
+htmlcov/
+
+# JetBrains IDEs
+.idea/
