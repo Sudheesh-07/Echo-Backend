@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import requests
 from config import BREVO_API_KEY
 
@@ -6,6 +7,8 @@ async def send_verification_email(email: str, otp: str):
     <html>
       <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 2rem;">
         <div style="max-width: 500px; margin: auto; background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 2rem; text-align: center;">
+          <img src="https://i.ibb.co/kVSLLSBC/echo-email-logo.png
+" alt="Echo Logo" style="height: 150px; margin-bottom: 1rem;" />
           <h2 style="color: #6366F1;">Welcome to Echo</h2>
           <p style="font-size: 1rem; color: #333;">Use the following OTP to verify your email address:</p>
           <div style="font-size: 2rem; font-weight: bold; margin: 1rem 0; color: #FCD34D;">{otp}</div>
@@ -20,7 +23,7 @@ async def send_verification_email(email: str, otp: str):
     payload = {
         "sender": {"name": "Echo", "email": "no-reply@dev.sudheeshshetty.com"},
         "to": [{"email": email}],
-        "subject": "Your OTP Code - Echo",
+        "subject": f"Your OTP: Code to sign in to Echo is {otp}",
         "htmlContent": html_content,
     }
 
