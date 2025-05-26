@@ -5,10 +5,10 @@ from .email_service import send_verification_email
 from database import redis_client, db
 
 router = APIRouter(prefix="/auth")
-home = APIRouter()
-@home.get("/")
-async def home():
-    return {"message": "Hello World"}
+
+@router.get("/")
+async def root():
+    return {"message": "Auth service is running"}
 
 @router.post("/login")
 async def login(data: EmailRequest):
