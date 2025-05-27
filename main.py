@@ -4,5 +4,5 @@ from auth.router import router as auth_router
 app = FastAPI()
 @app.get("/")
 async def root():
-    return {"message": "API is running"}
+    return {"message": "Hello API is running as Expected"}
 app.include_router(auth_router)
