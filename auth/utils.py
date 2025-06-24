@@ -4,7 +4,7 @@ from config import JWT_SECRET
 from fastapi import HTTPException
 from database import redis_client
 
-def generate_otp(length=6):
+def generate_otp(length=5):
     return ''.join(random.choices(string.digits, k=length))
 
 def create_jwt(email: str):
