@@ -1,6 +1,10 @@
+from datetime import timedelta
+from jose import jwt
 from fastapi import APIRouter, HTTPException, status
-from .models import EmailRequest, OTPVerifyRequest
-from .utils import generate_otp, create_jwt, check_rate_limit
+
+from app.config import REFRESH_SECRET
+from .models import EmailRequest, OTPVerifyRequest, TokenRequest
+from .utils import generate_otp, create_jwt, check_rate_limit, refresh_jwt
 from .email_service import send_verification_email
 from database import redis_client, db
 
@@ -10,7 +14,7 @@ router = APIRouter(prefix="/auth")
 async def root():
     return {"message": "Auth service is running"}
 
-@router.post("/login")
+@router.post("/send-otp")
 async def login(data: EmailRequest):
     await check_rate_limit(f"rate:login:{data.email}")
     otp = generate_otp()
@@ -29,6 +33,26 @@ async def verify(data: OTPVerifyRequest):
     if not existing:
         await db.users.insert_one({"email": data.email})
 
-    token = create_jwt(data.email)
-    return {"token": token}
+    access_token = create_jwt(data.email)
+    refresh_token = refresh_jwt(data.email)
+    await redis_client.setex(f"refresh:{data.email}", timedelta(days=30), refresh_token)
+    return {"access_token": access_token,"refresh_token": refresh_token}
+
+@router.post("/refresh")
+async def refresh(data: TokenRequest):
+    refresh_token = data.refresh_token
+    try:
+        payload = jwt.decode(refresh_token, REFRESH_SECRET, algorithms=["HS256"])
+        email = payload["sub"]
+        stored_refresh_token = await redis_client.get(f"refresh:{email}")
+        if not stored_refresh_token or stored_refresh_token.decode() != refresh_token:
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+        new_access_token = create_jwt(email)
+        new_refresh_token = refresh_jwt(email)
+        await redis_client.setex(f"refresh:{email}", timedelta(days=30), new_refresh_token)
+        return {"access_token": new_access_token, "refresh_token": new_refresh_token}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code = 401, detail="Refresh token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code = 401, detail="Invalid refresh token")
 
