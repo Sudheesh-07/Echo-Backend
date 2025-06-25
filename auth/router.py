@@ -1,8 +1,7 @@
 from datetime import timedelta
 from jose import jwt
 from fastapi import APIRouter, HTTPException, status
-
-from app.config import REFRESH_SECRET
+from config import REFRESH_SECRET
 from .models import EmailRequest, OTPVerifyRequest, TokenRequest
 from .utils import generate_otp, create_jwt, check_rate_limit, refresh_jwt
 from .email_service import send_verification_email
