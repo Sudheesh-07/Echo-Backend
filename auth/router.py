@@ -35,7 +35,7 @@ async def verify(data: OTPVerifyRequest):
     access_token = create_jwt(data.email)
     refresh_token = refresh_jwt(data.email)
     await redis_client.setex(f"refresh:{data.email}", timedelta(days=30), refresh_token)
-    return {"access_token": access_token,"refresh_token": refresh_token}
+    return {"access_token": access_token,"refresh_token": refresh_token,"message": "OTP verified"}
 
 @router.post("/refresh")
 async def refresh(data: TokenRequest):
