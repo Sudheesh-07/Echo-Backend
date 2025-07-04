@@ -3,7 +3,7 @@ from jose import jwt
 from fastapi import APIRouter, HTTPException, status
 from config import REFRESH_SECRET
 from .models import EmailRequest, OTPVerifyRequest, TokenRequest
-from .utils import generate_otp, create_jwt, check_rate_limit, refresh_jwt
+from .utils import generate_otp, create_jwt, check_rate_limit, refresh_jwt, generate_random_username
 from .email_service import send_verification_email
 from database import redis_client, db
 
@@ -54,4 +54,12 @@ async def refresh(data: TokenRequest):
         raise HTTPException(status_code = 401, detail="Refresh token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code = 401, detail="Invalid refresh token")
+    
+@router.get('/random_username')
+async def get_random_username():
+    try:
+        username = await generate_random_username()
+        return {"username": username}
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to generate username")
 

@@ -4,5 +4,5 @@ from redis.asyncio import Redis
 
 client = AsyncIOMotorClient(MONGO_URI)
 db = client["echo"]
-
+users_collection = db["users"]
 redis_client = Redis.from_url("redis://localhost", decode_responses=True)
